@@ -36,48 +36,21 @@
   }
   .mono{ font-family:'JetBrains Mono', monospace; }
 
-  .unit{
-    width:100%;
-    max-width: 620px;
-  }
+  .unit{ width:100%; max-width: 640px; }
 
   .unit__top{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:16px;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
     margin-bottom: 6px;
   }
-  .unit__top h1{
-    font-size: 1.5rem;
-    font-weight:700;
-    margin:0 0 4px;
-    letter-spacing: -0.01em;
-  }
-  .tagline{
-    color: var(--text-dim);
-    font-size:0.92rem;
-    margin: 0 0 28px;
-    max-width: 46ch;
-  }
+  .unit__top h1{ font-size: 1.5rem; font-weight:700; margin:0 0 4px; letter-spacing: -0.01em; }
+  .tagline{ color: var(--text-dim); font-size:0.92rem; margin: 0 0 28px; max-width: 48ch; }
 
   .status{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding: 6px 12px;
-    border:1px solid var(--border);
-    border-radius: 999px;
-    font-size: 0.72rem;
-    color: var(--text-dim);
-    white-space:nowrap;
-    margin-top: 2px;
+    display:flex; align-items:center; gap:8px;
+    padding: 6px 12px; border:1px solid var(--border); border-radius: 999px;
+    font-size: 0.72rem; color: var(--text-dim); white-space:nowrap; margin-top: 2px;
   }
-  .status__dot{
-    width:8px; height:8px; border-radius:50%;
-    background: var(--text-dim);
-    box-shadow: none;
-  }
+  .status__dot{ width:8px; height:8px; border-radius:50%; background: var(--text-dim); }
   .status--idle .status__dot{ background:#5B6066; }
   .status--busy .status__dot{ background: var(--amber); box-shadow: 0 0 8px var(--amber); animation: pulse 1s infinite ease-in-out; }
   .status--busy .status__text{ color: var(--amber); }
@@ -87,62 +60,64 @@
   .status--error .status__text{ color: var(--red); }
   @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
 
+  /* source picker (file / url tabs) */
+  .src-tabs{ display:flex; gap:6px; margin-bottom:12px; }
+  .src-tab{
+    font-family:inherit; font-size:0.85rem; font-weight:600; color: var(--text-dim);
+    background: var(--panel); border:1px solid var(--border); border-radius: 8px;
+    padding: 9px 16px; cursor:pointer;
+  }
+  .src-tab.is-active{ color: var(--text); border-color: var(--accent); background: var(--accent-dim); }
+
   .dropzone{
-    border: 1.5px dashed var(--border);
-    border-radius: var(--radius);
-    background: var(--panel);
-    padding: 44px 20px;
-    text-align:center;
-    cursor:pointer;
+    border: 1.5px dashed var(--border); border-radius: var(--radius); background: var(--panel);
+    padding: 44px 20px; text-align:center; cursor:pointer;
     transition: border-color .15s ease, background .15s ease;
   }
-  .dropzone.is-drag{
-    border-color: var(--accent);
-    background: var(--accent-dim);
-  }
+  .dropzone.is-drag{ border-color: var(--accent); background: var(--accent-dim); }
+  .dropzone--compact{ padding: 26px 16px; }
   .dropzone__title{ margin:0 0 6px; font-weight:600; font-size:1rem; }
   .dropzone__sub{ margin:0; color: var(--text-dim); font-size:0.85rem; }
   .link-btn{
-    background:none; border:none; color: var(--accent);
-    font: inherit; font-weight:600; cursor:pointer; padding:0; text-decoration: underline;
-    text-underline-offset: 2px;
+    background:none; border:none; color: var(--accent); font: inherit; font-weight:600;
+    cursor:pointer; padding:0; text-decoration: underline; text-underline-offset: 2px;
   }
 
-  .dropzone--compact{ padding: 24px 16px; }
-
-  .preview{
-    margin-top:18px;
-    background: var(--panel);
-    border:1px solid var(--border);
-    border-radius: var(--radius);
-    padding:14px;
+  .url-row{ display:flex; gap:8px; }
+  .url-input{
+    flex:1; background: var(--panel); border:1px solid var(--border); border-radius:8px;
+    padding: 12px 14px; color: var(--text); font-size:0.85rem;
   }
+  .url-input:focus{ outline:none; border-color: var(--accent); }
+  .src-hint{ margin: 10px 2px 0; font-size:0.76rem; color: var(--text-dim); }
+  .src-error{
+    margin-top:12px; padding:11px 14px; border-radius:8px;
+    background: rgba(214,84,61,0.1); border:1px solid rgba(214,84,61,0.4);
+    color: #F0A093; font-size:0.83rem;
+  }
+
+  .preview{ margin-top:18px; background: var(--panel); border:1px solid var(--border); border-radius: var(--radius); padding:14px; }
   .preview__media video, .preview__media audio{ width:100%; display:block; border-radius:6px; background:#000; }
-  .preview__meta{
-    display:flex; align-items:center; gap:12px;
-    margin-top:10px; font-size:0.82rem; color: var(--text-dim);
+  .preview__meta{ display:flex; align-items:flex-start; gap:12px; margin-top:12px; }
+  .preview__info{ flex:1; min-width:0; }
+  .preview__name{ color: var(--text); font-weight:600; font-size:0.88rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .preview__format{ margin-top:4px; display:flex; align-items:center; gap:8px; }
+  .preview__ext{
+    font-size:0.72rem; font-weight:700; color: var(--bg); background: var(--accent);
+    border-radius:5px; padding:2px 7px; letter-spacing:0.02em;
   }
-  #fileName{ color: var(--text); font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; }
+  .preview__mime{ font-size:0.76rem; color: var(--text-dim); }
   .text-btn{
     background:none; border:none; color: var(--accent); font:inherit; font-weight:600;
-    cursor:pointer; padding:0; font-size:0.82rem; flex-shrink:0;
+    cursor:pointer; padding:0; font-size:0.82rem; flex-shrink:0; margin-top:2px;
   }
 
-  .actions{
-    margin-top: 18px;
-    display:grid;
-    gap:10px;
-  }
+  .actions{ margin-top: 18px; display:grid; gap:10px; }
+  .actions__hint{ font-size:0.76rem; color: var(--text-dim); margin: 0 0 10px; }
   .action{
     display:flex; align-items:center; justify-content:space-between; gap:14px;
-    width:100%; text-align:left;
-    background: var(--panel);
-    border:1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    color: var(--text);
-    font-family:inherit;
-    cursor:pointer;
+    width:100%; text-align:left; background: var(--panel); border:1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px; color: var(--text); font-family:inherit; cursor:pointer;
     transition: border-color .15s ease, background .15s ease;
   }
   .action:hover:not(:disabled){ border-color: var(--accent); background: var(--panel-2); }
@@ -151,26 +126,18 @@
   .action__desc{ font-weight:400; font-size:0.8rem; color: var(--text-dim); margin:0; }
   .action__go{ color: var(--accent); font-size:1.1rem; flex-shrink:0; }
 
-  .secondary{
-    margin-top:16px;
-    padding:16px;
-    border:1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--panel-2);
-  }
-  .secondary__title{ font-size:0.85rem; color:var(--text-dim); margin:0 0 10px; }
-  .secondary__filename{ font-size:0.85rem; margin-top:10px; color:var(--text); }
+  .secondary{ margin-top:16px; padding:16px; border:1px solid var(--border); border-radius: var(--radius); background: var(--panel-2); }
+  .secondary__title{ font-size:0.85rem; color:var(--text-dim); margin:0 0 12px; }
+  .secondary__picked{ font-size:0.85rem; margin: 12px 0; color: var(--text); display:flex; align-items:center; gap:8px; }
 
   .btn{
-    display:inline-flex; align-items:center; justify-content:center;
-    border-radius: 8px; padding: 11px 20px; font-family:inherit; font-weight:600;
-    font-size:0.9rem; cursor:pointer; border:1px solid var(--accent); text-decoration:none;
-    margin-top:12px;
+    display:inline-flex; align-items:center; justify-content:center; border-radius: 8px;
+    padding: 11px 20px; font-family:inherit; font-weight:600; font-size:0.9rem; cursor:pointer;
+    border:1px solid var(--accent); text-decoration:none; margin-top:6px;
   }
   .btn--primary{ background: var(--accent); color:#0E1413; border-color: var(--accent); }
   .btn--primary:hover{ filter: brightness(1.08); }
   .btn--primary:disabled{ opacity:0.4; cursor:not-allowed; }
-  .btn--ghost{ background:transparent; color:var(--accent); }
 
   .progress-wrap{ margin-top:18px; }
   .progress-label{ display:flex; justify-content:space-between; font-size:0.78rem; color:var(--text-dim); margin-bottom:8px; }
@@ -179,11 +146,7 @@
   .vu-seg{ flex:1; background: var(--panel-2); border:1px solid var(--border); border-radius:2px; transition: background .1s ease; }
   .vu-seg.lit{ background: var(--amber); border-color: var(--amber); }
 
-  .result{
-    margin-top:20px; padding:16px;
-    border:1px solid var(--border); border-radius: var(--radius);
-    background: var(--panel);
-  }
+  .result{ margin-top:20px; padding:16px; border:1px solid var(--border); border-radius: var(--radius); background: var(--panel); }
   .result__title{ margin:0 0 12px; font-weight:600; color: var(--green); font-size:0.95rem; }
   .result video, .result audio{ width:100%; border-radius:6px; background:#000; }
   .result__note{ font-size:0.78rem; color:var(--text-dim); margin-top:10px; }
@@ -193,13 +156,11 @@
     background: rgba(214,84,61,0.1); border:1px solid rgba(214,84,61,0.4);
     color: #F0A093; font-size:0.85rem;
   }
-
   .compat-note{
     margin-top:24px; padding:14px 16px; border-radius:8px;
     background: rgba(231,167,58,0.08); border:1px solid rgba(231,167,58,0.35);
     color: var(--amber); font-size:0.82rem;
   }
-
   .foot-note{ margin-top:28px; color: var(--text-dim); font-size:0.76rem; }
 
   @media (max-width: 480px){
@@ -215,7 +176,7 @@
   <div class="unit__top">
     <div>
       <h1>Ruang Racik</h1>
-      <p class="tagline">Jatuhkan file video atau audio — ambil suaranya, bisukan videonya, atau tempelkan audio ke video yang belum ada suaranya. Semua diproses langsung di browser, tidak diunggah ke server manapun.</p>
+      <p class="tagline">Ambil suara dari video, bisukan video, atau tempelkan audio ke video yang belum bersuara — dari file di perangkatmu atau langsung dari URL. Semua diproses di browser, tidak diunggah ke server manapun.</p>
     </div>
     <div class="status status--idle" id="statusPill">
       <span class="status__dot"></span>
@@ -223,17 +184,19 @@
     </div>
   </div>
 
-  <div class="dropzone" id="dropzoneMain">
-    <input type="file" id="fileInputMain" accept="video/*,audio/*" hidden>
-    <p class="dropzone__title">Tarik &amp; lepas file video/audio di sini</p>
-    <p class="dropzone__sub">atau <span class="link-btn">pilih dari perangkat</span></p>
-  </div>
+  <div id="mainPicker"></div>
 
   <div class="preview" id="previewArea" hidden>
     <div class="preview__media" id="previewMediaWrap"></div>
     <div class="preview__meta">
-      <span id="fileName" class="mono"></span>
-      <button class="text-btn" id="clearBtn">ganti file</button>
+      <div class="preview__info">
+        <div class="preview__name mono" id="fileName"></div>
+        <div class="preview__format">
+          <span class="preview__ext" id="fileExt"></span>
+          <span class="preview__mime" id="fileMime"></span>
+        </div>
+      </div>
+      <button class="text-btn" id="clearBtn">ganti sumber</button>
     </div>
   </div>
 
@@ -262,23 +225,23 @@
     Browser ini sepertinya tidak mendukung pemrosesan media secara langsung (butuh <span class="mono">MediaRecorder</span> &amp; <span class="mono">captureStream</span>). Coba buka halaman ini di Chrome atau Edge versi terbaru, lebih baik di laptop/desktop.
   </p>
 
-  <p class="foot-note">Hasil selalu berupa file <span class="mono">.webm</span>. Karena diproses lewat pemutaran ulang, prosesnya butuh waktu kira-kira sepanjang durasi file aslinya.</p>
+  <p class="foot-note">Hasil akhirnya selalu file <span class="mono">.webm</span>. File dari URL harus tautan langsung ke berkas media dan servernya perlu mengizinkan akses lintas domain (CORS) supaya bisa ikut diproses, bukan cuma dilihat.</p>
 
 </div>
 
 <script>
 (function(){
-  const dropzoneMain = document.getElementById('dropzoneMain');
-  const fileInputMain = document.getElementById('fileInputMain');
   const previewArea = document.getElementById('previewArea');
   const previewMediaWrap = document.getElementById('previewMediaWrap');
   const fileNameEl = document.getElementById('fileName');
+  const fileExtEl = document.getElementById('fileExt');
+  const fileMimeEl = document.getElementById('fileMime');
   const clearBtn = document.getElementById('clearBtn');
+  const mainPicker = document.getElementById('mainPicker');
   const actionsArea = document.getElementById('actionsArea');
   const secondaryArea = document.getElementById('secondaryArea');
   const errorArea = document.getElementById('errorArea');
   const progressWrap = document.getElementById('progressWrap');
-  const progressLabel = document.getElementById('progressLabel');
   const progressPct = document.getElementById('progressPct');
   const vuMeter = document.getElementById('vuMeter');
   const resultArea = document.getElementById('resultArea');
@@ -289,8 +252,9 @@
   const statusPill = document.getElementById('statusPill');
   const statusText = document.getElementById('statusText');
 
-  const state = { file: null, kind: null, secondaryFile: null, secondaryKind: null, busy:false };
+  const state = { source: null, secondarySource: null, busy:false };
   const SEG_COUNT = 28;
+  const NOT_FOUND_MSG = 'Maaf, URL tidak ditemukan. Tolong pastikan masukan URL yang benar.';
 
   // ---------- compat check ----------
   function browserSupported(){
@@ -304,9 +268,7 @@
   function buildVuMeter(){
     vuMeter.innerHTML = '';
     for(let i=0;i<SEG_COUNT;i++){
-      const s = document.createElement('span');
-      s.className = 'vu-seg';
-      vuMeter.appendChild(s);
+      const s = document.createElement('span'); s.className = 'vu-seg'; vuMeter.appendChild(s);
     }
   }
   buildVuMeter();
@@ -315,29 +277,20 @@
     const lit = Math.round((pct/100) * SEG_COUNT);
     [...vuMeter.children].forEach((seg, i) => seg.classList.toggle('lit', i < lit));
   }
-
-  function setStatus(kind, label){
-    statusPill.className = 'status status--' + kind;
-    statusText.textContent = label;
-  }
-
+  function setStatus(kind, label){ statusPill.className = 'status status--' + kind; statusText.textContent = label; }
   function setBusy(isBusy){
     state.busy = isBusy;
     progressWrap.hidden = !isBusy;
     if(isBusy){ updateProgress(0); setStatus('busy','memproses'); }
     actionsArea.querySelectorAll('.action').forEach(b => b.disabled = isBusy);
   }
-
-  function showError(msg){
-    errorArea.innerHTML = '<div class="error-note">' + msg + '</div>';
-    setStatus('error','gagal');
-  }
+  function showError(msg){ errorArea.innerHTML = '<div class="error-note">' + msg + '</div>'; setStatus('error','gagal'); }
   function clearError(){ errorArea.innerHTML=''; }
 
   // ---------- file type detection ----------
   const VIDEO_EXT = ['mp4','mov','webm','mkv','avi','m4v','ogv'];
   const AUDIO_EXT = ['mp3','wav','m4a','aac','ogg','flac','opus','weba'];
-  function detectKind(file){
+  function detectKindFromFile(file){
     if(file.type.startsWith('video/')) return 'video';
     if(file.type.startsWith('audio/')) return 'audio';
     const ext = (file.name.split('.').pop() || '').toLowerCase();
@@ -346,65 +299,146 @@
     return null;
   }
 
-  // ---------- generic dropzone wiring ----------
   function wireDropzone(zoneEl, inputEl, onFile){
     zoneEl.addEventListener('click', () => inputEl.click());
-    inputEl.addEventListener('change', () => {
-      if(inputEl.files[0]) onFile(inputEl.files[0]);
-    });
-    ['dragenter','dragover'].forEach(ev => zoneEl.addEventListener(ev, e => {
-      e.preventDefault(); zoneEl.classList.add('is-drag');
-    }));
-    ['dragleave','drop'].forEach(ev => zoneEl.addEventListener(ev, e => {
-      e.preventDefault(); zoneEl.classList.remove('is-drag');
-    }));
-    zoneEl.addEventListener('drop', e => {
-      const f = e.dataTransfer.files[0];
-      if(f) onFile(f);
+    inputEl.addEventListener('change', () => { if(inputEl.files[0]) onFile(inputEl.files[0]); });
+    ['dragenter','dragover'].forEach(ev => zoneEl.addEventListener(ev, e => { e.preventDefault(); zoneEl.classList.add('is-drag'); }));
+    ['dragleave','drop'].forEach(ev => zoneEl.addEventListener(ev, e => { e.preventDefault(); zoneEl.classList.remove('is-drag'); }));
+    zoneEl.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if(f) onFile(f); });
+  }
+
+  function showSrcError(container, msg){
+    let box = container.querySelector('.src-error');
+    if(!box){ box = document.createElement('p'); box.className='src-error'; container.appendChild(box); }
+    box.textContent = msg;
+  }
+  function clearSrcError(container){ const box = container.querySelector('.src-error'); if(box) box.remove(); }
+
+  function tryLoadUrl(url, tag){
+    return new Promise((resolve, reject) => {
+      const el = document.createElement(tag);
+      el.crossOrigin = 'anonymous';
+      el.preload = 'metadata';
+      let settled = false;
+      const timer = setTimeout(() => { if(!settled){ settled = true; reject(new Error('timeout')); } }, 12000);
+      el.addEventListener('loadedmetadata', () => { if(settled) return; settled = true; clearTimeout(timer); resolve(el); }, { once:true });
+      el.addEventListener('error', () => { if(settled) return; settled = true; clearTimeout(timer); reject(new Error('load-error')); }, { once:true });
+      el.src = url;
     });
   }
 
-  wireDropzone(dropzoneMain, fileInputMain, handleMainFile);
+  // ---------- reusable source picker (Upload File / Dari URL) ----------
+  function createSourcePicker(container, opts){
+    container.innerHTML = '';
+    const tabs = document.createElement('div'); tabs.className = 'src-tabs';
+    const tabFile = document.createElement('button'); tabFile.type='button'; tabFile.className='src-tab is-active'; tabFile.textContent='Upload file';
+    const tabUrl = document.createElement('button'); tabUrl.type='button'; tabUrl.className='src-tab'; tabUrl.textContent='Dari URL';
+    tabs.appendChild(tabFile); tabs.appendChild(tabUrl);
+    container.appendChild(tabs);
 
-  function handleMainFile(file){
-    const kind = detectKind(file);
+    const panelFile = document.createElement('div');
+    const panelUrl = document.createElement('div'); panelUrl.hidden = true;
+    container.appendChild(panelFile); container.appendChild(panelUrl);
+
+    const zone = document.createElement('div'); zone.className = 'dropzone dropzone--compact';
+    zone.innerHTML = '<p class="dropzone__title">Tarik &amp; lepas file di sini</p><p class="dropzone__sub">atau <span class="link-btn">pilih dari perangkat</span></p>';
+    const input = document.createElement('input'); input.type = 'file'; input.hidden = true;
+    input.accept = opts.restrictKind === 'audio' ? 'audio/*' : opts.restrictKind === 'video' ? 'video/*' : 'video/*,audio/*';
+    panelFile.appendChild(zone); panelFile.appendChild(input);
+
+    wireDropzone(zone, input, file => {
+      const kind = detectKindFromFile(file);
+      if(!kind){ showSrcError(container, 'Format file ini tidak dikenali. Coba file video atau audio yang umum.'); return; }
+      if(opts.restrictKind && kind !== opts.restrictKind){
+        showSrcError(container, 'File itu kelihatannya bukan file ' + (opts.restrictKind==='audio' ? 'audio' : 'video') + '. Coba pilih ulang.');
+        return;
+      }
+      clearSrcError(container);
+      const ext = (file.name.split('.').pop() || '').toUpperCase();
+      opts.onResolved({ kind, origin:'file', file, url:null, name:file.name, extLabel: ext || '?', mimeLabel: file.type || 'format tidak diketahui pasti' });
+    });
+
+    const urlRow = document.createElement('div'); urlRow.className = 'url-row';
+    const urlInput = document.createElement('input'); urlInput.type='text'; urlInput.className='url-input mono';
+    urlInput.placeholder = 'https://.../video.mp4';
+    const urlBtn = document.createElement('button'); urlBtn.type='button'; urlBtn.className='btn btn--primary'; urlBtn.textContent='Cari';
+    urlRow.appendChild(urlInput); urlRow.appendChild(urlBtn);
+    panelUrl.appendChild(urlRow);
+    const hint = document.createElement('p'); hint.className = 'src-hint';
+    hint.textContent = 'Tempel tautan langsung ke berkas video/audio (biasanya berakhiran .mp4, .mp3, .webm, dll) — bukan tautan halaman seperti YouTube atau Instagram.';
+    panelUrl.appendChild(hint);
+
+    tabFile.addEventListener('click', () => { tabFile.classList.add('is-active'); tabUrl.classList.remove('is-active'); panelFile.hidden=false; panelUrl.hidden=true; clearSrcError(container); });
+    tabUrl.addEventListener('click', () => { tabUrl.classList.add('is-active'); tabFile.classList.remove('is-active'); panelUrl.hidden=false; panelFile.hidden=true; clearSrcError(container); });
+
+    async function handleSearch(){
+      const raw = urlInput.value.trim();
+      clearSrcError(container);
+      let parsed;
+      try{ parsed = new URL(raw); }catch(e){ showSrcError(container, NOT_FOUND_MSG); return; }
+
+      urlBtn.disabled = true; urlBtn.textContent = 'Mencari…';
+      const kindsToTry = opts.restrictKind ? [opts.restrictKind] : ['video','audio'];
+      let found = null;
+      for(const k of kindsToTry){
+        try{ await tryLoadUrl(raw, k); found = k; break; }catch(e){ /* coba jenis berikutnya */ }
+      }
+      urlBtn.disabled = false; urlBtn.textContent = 'Cari';
+
+      if(!found){ showSrcError(container, NOT_FOUND_MSG); return; }
+
+      let name = 'file-dari-url';
+      try{
+        const seg = decodeURIComponent(parsed.pathname.split('/').filter(Boolean).pop() || '');
+        if(seg) name = seg;
+      }catch(e){}
+      const ext = (name.includes('.') ? name.split('.').pop() : '').toUpperCase();
+      opts.onResolved({ kind: found, origin:'url', file:null, url: raw, name, extLabel: ext || '?', mimeLabel: 'dari URL, format belum pasti' });
+    }
+    urlBtn.addEventListener('click', handleSearch);
+    urlInput.addEventListener('keydown', e => { if(e.key === 'Enter') handleSearch(); });
+  }
+
+  // ---------- main picker ----------
+  createSourcePicker(mainPicker, { restrictKind: null, onResolved: onMainResolved });
+
+  function onMainResolved(source){
+    state.source = source;
+    state.secondarySource = null;
     clearError();
     resultArea.hidden = true;
     secondaryArea.hidden = true;
-    if(!kind){
-      showError('Format file ini tidak dikenali. Coba file video (mp4, mov, webm…) atau audio (mp3, wav, m4a…) yang umum.');
-      return;
-    }
-    state.file = file; state.kind = kind; state.secondaryFile = null;
     setStatus('idle','siap');
 
+    mainPicker.hidden = true;
     previewMediaWrap.innerHTML = '';
-    const el = document.createElement(kind === 'video' ? 'video' : 'audio');
-    el.src = URL.createObjectURL(file);
+    const el = elFromSource(source);
     el.controls = true;
     previewMediaWrap.appendChild(el);
-    fileNameEl.textContent = file.name;
+    fileNameEl.textContent = source.name;
+    fileExtEl.textContent = source.extLabel;
+    fileMimeEl.textContent = source.mimeLabel;
     previewArea.hidden = false;
 
     renderActions();
   }
 
   clearBtn.addEventListener('click', () => {
-    state.file = null; state.kind = null; state.secondaryFile = null;
+    state.source = null; state.secondarySource = null;
     previewArea.hidden = true;
     actionsArea.hidden = true;
     secondaryArea.hidden = true;
     resultArea.hidden = true;
     clearError();
     setStatus('idle','siap');
-    fileInputMain.value = '';
+    mainPicker.hidden = false;
+    createSourcePicker(mainPicker, { restrictKind: null, onResolved: onMainResolved });
   });
 
   // ---------- action rendering ----------
   function addAction(container, label, desc, handler){
     const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'action';
+    btn.type = 'button'; btn.className = 'action';
     btn.innerHTML = '<div><p class="action__label"></p><p class="action__desc"></p></div><span class="action__go">→</span>';
     btn.querySelector('.action__label').textContent = label;
     btn.querySelector('.action__desc').textContent = desc;
@@ -418,75 +452,75 @@
     actionsArea.hidden = false;
     secondaryArea.hidden = true;
 
-    if(state.kind === 'video'){
+    const hint = document.createElement('p');
+    hint.className = 'actions__hint';
+    hint.textContent = 'Mau diapain filenya? File akan dinormalisasi ke WebM sambil diolah sesuai pilihanmu.';
+    actionsArea.appendChild(hint);
+
+    if(state.source.kind === 'video'){
       addAction(actionsArea, 'Konversi ke WebM', 'Simpan ulang video ini (gambar + suara) dalam format WebM.', runConvertAsIs);
       addAction(actionsArea, 'Ambil audionya saja', 'Keluarkan suaranya menjadi file audio terpisah.', runExtractAudio);
       addAction(actionsArea, 'Bisukan video', 'Buang audionya, hasil akhirnya video tanpa suara.', runMute);
-      addAction(actionsArea, 'Ganti / tambah audio', 'Pasang suara dari file audio lain ke video ini.', () => showSecondaryDrop('audio'));
+      addAction(actionsArea, 'Ganti / tambah audio', 'Pasang suara dari file audio lain ke video ini.', () => showSecondaryPicker('audio'));
     } else {
       addAction(actionsArea, 'Konversi ke WebM', 'Simpan ulang audio ini dalam format WebM (Opus).', runConvertAsIs);
-      addAction(actionsArea, 'Tempelkan ke video', 'Gabungkan audio ini dengan video (yang belum ada suaranya) pilihanmu.', () => showSecondaryDrop('video'));
+      addAction(actionsArea, 'Tempelkan ke video', 'Gabungkan audio ini dengan video (yang belum ada suaranya) pilihanmu.', () => showSecondaryPicker('video'));
     }
   }
 
-  function showSecondaryDrop(neededKind){
+  function showSecondaryPicker(neededKind){
     secondaryArea.hidden = false;
     secondaryArea.innerHTML = '';
     const title = document.createElement('p');
     title.className = 'secondary__title';
-    title.textContent = neededKind === 'audio'
-      ? 'Jatuhkan file audio yang mau dipasang:'
-      : 'Jatuhkan file video yang mau ditempeli audio ini:';
+    title.textContent = neededKind === 'audio' ? 'Pilih file audio yang mau dipasang:' : 'Pilih file video yang mau ditempeli audio ini:';
     secondaryArea.appendChild(title);
 
-    const zone = document.createElement('div');
-    zone.className = 'dropzone dropzone--compact';
-    zone.innerHTML = '<p class="dropzone__title">Tarik &amp; lepas di sini</p><p class="dropzone__sub">atau <span class="link-btn">pilih dari perangkat</span></p>';
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = neededKind === 'audio' ? 'audio/*' : 'video/*';
-    input.hidden = true;
-    secondaryArea.appendChild(zone);
-    secondaryArea.appendChild(input);
+    const pickerHost = document.createElement('div');
+    secondaryArea.appendChild(pickerHost);
 
-    const nameLine = document.createElement('p');
-    nameLine.className = 'secondary__filename mono';
-    secondaryArea.appendChild(nameLine);
+    const pickedLine = document.createElement('div');
+    pickedLine.className = 'secondary__picked';
+    pickedLine.hidden = true;
+    secondaryArea.appendChild(pickedLine);
 
     const goBtn = document.createElement('button');
-    goBtn.type = 'button';
-    goBtn.className = 'btn btn--primary';
-    goBtn.textContent = 'Gabungkan sekarang';
-    goBtn.disabled = true;
+    goBtn.type = 'button'; goBtn.className = 'btn btn--primary'; goBtn.textContent = 'Gabungkan sekarang'; goBtn.disabled = true;
     secondaryArea.appendChild(goBtn);
 
-    function onPicked(file){
-      const kind = detectKind(file);
-      if(kind !== neededKind){
-        showError('File itu kelihatannya bukan file ' + (neededKind==='audio'?'audio':'video') + '. Coba pilih ulang.');
-        return;
+    createSourcePicker(pickerHost, {
+      restrictKind: neededKind,
+      onResolved: (source) => {
+        state.secondarySource = source;
+        pickedLine.hidden = false;
+        pickedLine.innerHTML = '<span class="preview__ext">' + source.extLabel + '</span><span class="mono">' + source.name + '</span>';
+        goBtn.disabled = false;
+        clearError();
       }
-      clearError();
-      state.secondaryFile = file;
-      nameLine.textContent = file.name;
-      goBtn.disabled = false;
-    }
-    wireDropzone(zone, input, onPicked);
+    });
+
     goBtn.addEventListener('click', runCombine);
   }
 
   // ---------- media helpers ----------
-  function makeMediaEl(kind, file){
-    const el = document.createElement(kind === 'video' ? 'video' : 'audio');
-    el.src = URL.createObjectURL(file);
-    el.muted = true;
-    el.playsInline = true;
-    el.preload = 'auto';
-    el.style.position = 'fixed';
-    el.style.left = '-9999px';
-    el.style.width = '1px';
-    el.style.height = '1px';
-    document.body.appendChild(el);
+  function elFromSource(source, offscreen){
+    const el = document.createElement(source.kind === 'video' ? 'video' : 'audio');
+    if(source.origin === 'file'){
+      el.src = URL.createObjectURL(source.file);
+    } else {
+      el.crossOrigin = 'anonymous';
+      el.src = source.url;
+    }
+    if(offscreen){
+      el.muted = true;
+      el.playsInline = true;
+      el.preload = 'auto';
+      el.style.position = 'fixed';
+      el.style.left = '-9999px';
+      el.style.width = '1px';
+      el.style.height = '1px';
+      document.body.appendChild(el);
+    }
     return el;
   }
   function waitLoaded(el){
@@ -496,33 +530,36 @@
       el.addEventListener('error', () => reject(new Error('load-failed')), { once:true });
     });
   }
-  function captureOf(el){
-    return el.captureStream ? el.captureStream() : el.mozCaptureStream();
-  }
+  function captureOf(el){ return el.captureStream ? el.captureStream() : el.mozCaptureStream(); }
   function pickMime(candidates){
-    for(const c of candidates){
-      if(window.MediaRecorder && MediaRecorder.isTypeSupported(c)) return c;
-    }
+    for(const c of candidates){ if(window.MediaRecorder && MediaRecorder.isTypeSupported(c)) return c; }
     return candidates[candidates.length - 1];
   }
 
-  async function recordAndSave({ tracks, mimeCandidates, players, masterPlayer }){
+  async function recordAndSave({ tracks, mimeCandidates, players, masterPlayer, sourcesForCorsCheck }){
     const mime = pickMime(mimeCandidates);
     const stream = new MediaStream(tracks);
-    const recorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+    let recorder;
+    try{
+      recorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+    }catch(err){
+      throw Object.assign(new Error('recorder-init-failed'), { code:'recorder-init-failed' });
+    }
     const chunks = [];
     recorder.ondataavailable = e => { if(e.data && e.data.size > 0) chunks.push(e.data); };
     const stopped = new Promise(res => { recorder.onstop = res; });
 
     players.forEach(p => { p.currentTime = 0; });
-    recorder.start(150);
+    try{
+      recorder.start(150);
+    }catch(err){
+      throw Object.assign(new Error('cors-blocked'), { code:'cors-blocked' });
+    }
     await Promise.all(players.map(p => p.play().catch(() => {})));
 
     const onTime = () => {
       const dur = masterPlayer.duration;
-      if(dur && isFinite(dur)){
-        updateProgress(Math.min(100, (masterPlayer.currentTime / dur) * 100));
-      }
+      if(dur && isFinite(dur)) updateProgress(Math.min(100, (masterPlayer.currentTime / dur) * 100));
     };
     masterPlayer.addEventListener('timeupdate', onTime);
     await new Promise(res => masterPlayer.addEventListener('ended', res, { once:true }));
@@ -532,21 +569,25 @@
     recorder.stop();
     await stopped;
     updateProgress(100);
-    return { blob: new Blob(chunks, { type: mime || 'video/webm' }), mime };
+
+    const blob = new Blob(chunks, { type: mime || 'video/webm' });
+    const usedUrlSource = (sourcesForCorsCheck || []).some(s => s && s.origin === 'url');
+    if(usedUrlSource && blob.size < 2000){
+      throw Object.assign(new Error('cors-blocked'), { code:'cors-blocked' });
+    }
+    return { blob, mime };
   }
 
-  function baseName(file){
-    return file.name.replace(/\.[^.]+$/, '');
-  }
+  function baseNameFrom(source){ return source.name.replace(/\.[^.]+$/, ''); }
 
-  function finishResult(blob, kind, sourceName, note){
+  function finishResult(blob, kind, source, note){
     const url = URL.createObjectURL(blob);
     resultMediaWrap.innerHTML = '';
     const el = document.createElement(kind === 'video' ? 'video' : 'audio');
     el.src = url; el.controls = true;
     resultMediaWrap.appendChild(el);
     downloadLink.href = url;
-    downloadLink.download = baseName(sourceName) + '-hasil.webm';
+    downloadLink.download = baseNameFrom(source) + '-hasil.webm';
     resultNote.textContent = note || '';
     resultArea.hidden = false;
     setStatus('done','selesai');
@@ -555,27 +596,30 @@
 
   function cleanupEls(...els){ els.forEach(e => { try{ e.remove(); }catch(err){} }); }
 
+  function describeError(err){
+    if(err && err.code === 'cors-blocked'){
+      return 'File dari URL ini tidak bisa diproses karena servernya tidak mengizinkan akses lintas domain (CORS). Coba unduh dulu filenya, lalu upload sebagai file lewat tab "Upload file".';
+    }
+    return 'Proses gagal di browser ini. Coba pakai Chrome/Edge terbaru di desktop, atau coba file/URL lain.';
+  }
+
   // ---------- actions ----------
   async function runConvertAsIs(){
     if(state.busy) return;
     clearError(); setBusy(true);
     let el;
     try{
-      el = makeMediaEl(state.kind, state.file);
+      el = elFromSource(state.source, true);
       await waitLoaded(el);
       const stream = captureOf(el);
       const tracks = stream.getTracks();
-      const mimeCandidates = state.kind === 'video'
+      const mimeCandidates = state.source.kind === 'video'
         ? ['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']
         : ['audio/webm;codecs=opus','audio/webm'];
-      const { blob } = await recordAndSave({ tracks, mimeCandidates, players:[el], masterPlayer: el });
-      finishResult(blob, state.kind, state.file.name, 'Dikonversi ulang ke WebM dari file aslinya.');
-    }catch(err){
-      showError('Konversi gagal di browser ini. Coba pakai Chrome/Edge terbaru di desktop.');
-    }finally{
-      if(el) cleanupEls(el);
-      setBusy(false);
-    }
+      const { blob } = await recordAndSave({ tracks, mimeCandidates, players:[el], masterPlayer: el, sourcesForCorsCheck:[state.source] });
+      finishResult(blob, state.source.kind, state.source, 'Dikonversi ulang ke WebM dari sumber aslinya.');
+    }catch(err){ showError(describeError(err)); }
+    finally{ if(el) cleanupEls(el); setBusy(false); }
   }
 
   async function runExtractAudio(){
@@ -583,23 +627,16 @@
     clearError(); setBusy(true);
     let el;
     try{
-      el = makeMediaEl('video', state.file);
+      el = elFromSource(state.source, true);
       await waitLoaded(el);
       const stream = captureOf(el);
       const audioTracks = stream.getAudioTracks();
-      if(audioTracks.length === 0){
-        showError('Video ini sepertinya tidak punya audio untuk diambil.');
-        return;
-      }
+      if(audioTracks.length === 0){ showError('Video ini sepertinya tidak punya audio untuk diambil.'); return; }
       const mimeCandidates = ['audio/webm;codecs=opus','audio/webm'];
-      const { blob } = await recordAndSave({ tracks: audioTracks, mimeCandidates, players:[el], masterPlayer: el });
-      finishResult(blob, 'audio', state.file.name, 'Suara video sudah dipisah jadi file audio.');
-    }catch(err){
-      showError('Proses gagal di browser ini. Coba pakai Chrome/Edge terbaru di desktop.');
-    }finally{
-      if(el) cleanupEls(el);
-      setBusy(false);
-    }
+      const { blob } = await recordAndSave({ tracks: audioTracks, mimeCandidates, players:[el], masterPlayer: el, sourcesForCorsCheck:[state.source] });
+      finishResult(blob, 'audio', state.source, 'Suara video sudah dipisah jadi file audio.');
+    }catch(err){ showError(describeError(err)); }
+    finally{ if(el) cleanupEls(el); setBusy(false); }
   }
 
   async function runMute(){
@@ -607,54 +644,43 @@
     clearError(); setBusy(true);
     let el;
     try{
-      el = makeMediaEl('video', state.file);
+      el = elFromSource(state.source, true);
       await waitLoaded(el);
       const stream = captureOf(el);
       const videoTracks = stream.getVideoTracks();
       const mimeCandidates = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
-      const { blob } = await recordAndSave({ tracks: videoTracks, mimeCandidates, players:[el], masterPlayer: el });
-      finishResult(blob, 'video', state.file.name, 'Audio sudah dibuang, video ini tanpa suara.');
-    }catch(err){
-      showError('Proses gagal di browser ini. Coba pakai Chrome/Edge terbaru di desktop.');
-    }finally{
-      if(el) cleanupEls(el);
-      setBusy(false);
-    }
+      const { blob } = await recordAndSave({ tracks: videoTracks, mimeCandidates, players:[el], masterPlayer: el, sourcesForCorsCheck:[state.source] });
+      finishResult(blob, 'video', state.source, 'Audio sudah dibuang, video ini tanpa suara.');
+    }catch(err){ showError(describeError(err)); }
+    finally{ if(el) cleanupEls(el); setBusy(false); }
   }
 
   async function runCombine(){
     if(state.busy) return;
-    if(!state.secondaryFile) return;
+    if(!state.secondarySource) return;
     clearError(); setBusy(true);
 
-    let videoFile, audioFile;
-    if(state.kind === 'video'){ videoFile = state.file; audioFile = state.secondaryFile; }
-    else { videoFile = state.secondaryFile; audioFile = state.file; }
+    let videoSource, audioSource;
+    if(state.source.kind === 'video'){ videoSource = state.source; audioSource = state.secondarySource; }
+    else { videoSource = state.secondarySource; audioSource = state.source; }
 
     let vEl, aEl;
     try{
-      vEl = makeMediaEl('video', videoFile);
-      aEl = makeMediaEl('audio', audioFile);
+      vEl = elFromSource(videoSource, true);
+      aEl = elFromSource(audioSource, true);
       await Promise.all([waitLoaded(vEl), waitLoaded(aEl)]);
 
       const vStream = captureOf(vEl);
       const aStream = captureOf(aEl);
       const audioTracks = aStream.getAudioTracks();
-      if(audioTracks.length === 0){
-        showError('File audio yang dipilih sepertinya tidak punya suara.');
-        return;
-      }
+      if(audioTracks.length === 0){ showError('File audio yang dipilih sepertinya tidak punya suara.'); return; }
+
       const tracks = [...vStream.getVideoTracks(), ...audioTracks];
       const mimeCandidates = ['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
-      const { blob } = await recordAndSave({ tracks, mimeCandidates, players:[vEl, aEl], masterPlayer: vEl });
-      finishResult(blob, 'video', videoFile.name, 'Durasi hasil mengikuti durasi videonya. Kalau audio lebih pendek, sisanya jadi senyap.');
-    }catch(err){
-      showError('Proses gagal di browser ini. Coba pakai Chrome/Edge terbaru di desktop.');
-    }finally{
-      if(vEl) cleanupEls(vEl);
-      if(aEl) cleanupEls(aEl);
-      setBusy(false);
-    }
+      const { blob } = await recordAndSave({ tracks, mimeCandidates, players:[vEl, aEl], masterPlayer: vEl, sourcesForCorsCheck:[videoSource, audioSource] });
+      finishResult(blob, 'video', videoSource, 'Durasi hasil mengikuti durasi videonya. Kalau audio lebih pendek, sisanya jadi senyap.');
+    }catch(err){ showError(describeError(err)); }
+    finally{ if(vEl) cleanupEls(vEl); if(aEl) cleanupEls(aEl); setBusy(false); }
   }
 
 })();
