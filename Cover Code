@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruang Racik — konversi & gabung audio/video</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #121415;
+    --panel: #1A1D1F;
+    --panel-2: #202427;
+    --border: #2C3033;
+    --text: #ECE8E1;
+    --text-dim: #90969C;
+    --accent: #4FB6A8;
+    --accent-dim: #33403f;
+    --amber: #E7A73A;
+    --green: #57C48B;
+    --red: #D6543D;
+    --radius: 10px;
+  }
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display:flex;
+    justify-content:center;
+    padding: 40px 16px 80px;
+    line-height:1.5;
+  }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  .unit{
+    width:100%;
+    max-width: 620px;
+  }
+
+  .unit__top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom: 6px;
+  }
+  .unit__top h1{
+    font-size: 1.5rem;
+    font-weight:700;
+    margin:0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .tagline{
+    color: var(--text-dim);
+    font-size:0.92rem;
+    margin: 0 0 28px;
+    max-width: 46ch;
+  }
+
+  .status{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding: 6px 12px;
+    border:1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    white-space:nowrap;
+    margin-top: 2px;
+  }
+  .status__dot{
+    width:8px; height:8px; border-radius:50%;
+    background: var(--text-dim);
+    box-shadow: none;
+  }
+  .status--idle .status__dot{ background:#5B6066; }
+  .status--busy .status__dot{ background: var(--amber); box-shadow: 0 0 8px var(--amber); animation: pulse 1s infinite ease-in-out; }
+  .status--busy .status__text{ color: var(--amber); }
+  .status--done .status__dot{ background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .status--done .status__text{ color: var(--green); }
+  .status--error .status__dot{ background: var(--red); box-shadow: 0 0 8px var(--red); }
+  .status--error .status__text{ color: var(--red); }
+  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
+
+  .dropzone{
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    background: var(--panel);
+    padding: 44px 20px;
+    text-align:center;
+    cursor:pointer;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .dropzone.is-drag{
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .dropzone__title{ margin:0 0 6px; font-weight:600; font-size:1rem; }
+  .dropzone__sub{ margin:0; color: var(--text-dim); font-size:0.85rem; }
+  .link-btn{
+    background:none; border:none; color: var(--accent);
+    font: inherit; font-weight:600; cursor:pointer; padding:0; text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .dropzone--compact{ padding: 24px 16px; }
+
+  .preview{
+    margin-top:18px;
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    padding:14px;
+  }
+  .preview__media video, .preview__media audio{ width:100%; display:block; border-radius:6px; background:#000; }
+  .preview__meta{
+    display:flex; align-items:center; gap:12px;
+    margin-top:10px; font-size:0.82rem; color: var(--text-dim);
+  }
+  #fileName{ color: var(--text); font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; }
+  .text-btn{
+    background:none; border:none; color: var(--accent); font:inherit; font-weight:600;
+    cursor:pointer; padding:0; font-size:0.82rem; flex-shrink:0;
+  }
+
+  .actions{
+    margin-top: 18px;
+    display:grid;
+    gap:10px;
+  }
+  .action{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    width:100%; text-align:left;
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    color: var(--text);
+    font-family:inherit;
+    cursor:pointer;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .action:hover:not(:disabled){ border-color: var(--accent); background: var(--panel-2); }
+  .action:disabled{ opacity:0.45; cursor:not-allowed; }
+  .action__label{ font-weight:600; font-size:0.95rem; margin:0 0 2px; }
+  .action__desc{ font-weight:400; font-size:0.8rem; color: var(--text-dim); margin:0; }
+  .action__go{ color: var(--accent); font-size:1.1rem; flex-shrink:0; }
+
+  .secondary{
+    margin-top:16px;
+    padding:16px;
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--panel-2);
+  }
+  .secondary__title{ font-size:0.85rem; color:var(--text-dim); margin:0 0 10px; }
+  .secondary__filename{ font-size:0.85rem; margin-top:10px; color:var(--text); }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    border-radius: 8px; padding: 11px 20px; font-family:inherit; font-weight:600;
+    font-size:0.9rem; cursor:pointer; border:1px solid var(--accent); text-decoration:none;
+    margin-top:12px;
+  }
+  .btn--primary{ background: var(--accent); color:#0E1413; border-color: var(--accent); }
+  .btn--primary:hover{ filter: brightness(1.08); }
+  .btn--primary:disabled{ opacity:0.4; cursor:not-allowed; }
+  .btn--ghost{ background:transparent; color:var(--accent); }
+
+  .progress-wrap{ margin-top:18px; }
+  .progress-label{ display:flex; justify-content:space-between; font-size:0.78rem; color:var(--text-dim); margin-bottom:8px; }
+  #progressPct{ font-family:'JetBrains Mono', monospace; color: var(--amber); }
+  .vu-meter{ display:flex; gap:3px; height:16px; }
+  .vu-seg{ flex:1; background: var(--panel-2); border:1px solid var(--border); border-radius:2px; transition: background .1s ease; }
+  .vu-seg.lit{ background: var(--amber); border-color: var(--amber); }
+
+  .result{
+    margin-top:20px; padding:16px;
+    border:1px solid var(--border); border-radius: var(--radius);
+    background: var(--panel);
+  }
+  .result__title{ margin:0 0 12px; font-weight:600; color: var(--green); font-size:0.95rem; }
+  .result video, .result audio{ width:100%; border-radius:6px; background:#000; }
+  .result__note{ font-size:0.78rem; color:var(--text-dim); margin-top:10px; }
+
+  .error-note{
+    margin-top:14px; padding:12px 14px; border-radius:8px;
+    background: rgba(214,84,61,0.1); border:1px solid rgba(214,84,61,0.4);
+    color: #F0A093; font-size:0.85rem;
+  }
+
+  .compat-note{
+    margin-top:24px; padding:14px 16px; border-radius:8px;
+    background: rgba(231,167,58,0.08); border:1px solid rgba(231,167,58,0.35);
+    color: var(--amber); font-size:0.82rem;
+  }
+
+  .foot-note{ margin-top:28px; color: var(--text-dim); font-size:0.76rem; }
+
+  @media (max-width: 480px){
+    .unit__top{ flex-direction:column; }
+    .dropzone{ padding: 32px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="unit">
+
+  <div class="unit__top">
+    <div>
+      <h1>Ruang Racik</h1>
+      <p class="tagline">Jatuhkan file video atau audio — ambil suaranya, bisukan videonya, atau tempelkan audio ke video yang belum ada suaranya. Semua diproses langsung di browser, tidak diunggah ke server manapun.</p>
+    </div>
+    <div class="status status--idle" id="statusPill">
+      <span class="status__dot"></span>
+      <span class="status__text mono" id="statusText">siap</span>
+    </div>
+  </div>
+
+  <div class="dropzone" id="dropzoneMain">
+    <input type="file" id="fileInputMain" accept="video/*,audio/*" hidden>
+    <p class="dropzone__title">Tarik &amp; lepas file video/audio di sini</p>
+    <p class="dropzone__sub">atau <span class="link-btn">pilih dari perangkat</span></p>
+  </div>
+
+  <div class="preview" id="previewArea" hidden>
+    <div class="preview__media" id="previewMediaWrap"></div>
+    <div class="preview__meta">
+      <span id="fileName" class="mono"></span>
+      <button class="text-btn" id="clearBtn">ganti file</button>
+    </div>
+  </div>
+
+  <div class="actions" id="actionsArea" hidden></div>
+
+  <div class="secondary" id="secondaryArea" hidden></div>
+
+  <div id="errorArea"></div>
+
+  <div class="progress-wrap" id="progressWrap" hidden>
+    <div class="progress-label">
+      <span id="progressLabel">memproses…</span>
+      <span id="progressPct" class="mono">0%</span>
+    </div>
+    <div class="vu-meter" id="vuMeter"></div>
+  </div>
+
+  <div class="result" id="resultArea" hidden>
+    <p class="result__title">selesai — hasilnya siap diunduh</p>
+    <div id="resultMediaWrap"></div>
+    <a id="downloadLink" class="btn btn--primary" download>Unduh hasil</a>
+    <p class="result__note" id="resultNote"></p>
+  </div>
+
+  <p class="compat-note" id="compatNote" hidden>
+    Browser ini sepertinya tidak mendukung pemrosesan media secara langsung (butuh <span class="mono">MediaRecorder</span> &amp; <span class="mono">captureStream</span>). Coba buka halaman ini di Chrome atau Edge versi terbaru, lebih baik di laptop/desktop.
+  </p>
+
+  <p class="foot-note">Hasil selalu berupa file <span class="mono">.webm</span>. Karena diproses lewat pemutaran ulang, prosesnya butuh waktu kira-kira sepanjang durasi file aslinya.</p>
+
+</div>
+
+<script>
+(function(){
+  const dropzoneMain = document.getElementById('dropzoneMain');
+  const fileInputMain = document.getElementById('fileInputMain');
+  const previewArea = document.getElementById('previewArea');
+  const previewMediaWrap = document.getElementById('previewMediaWrap');
+  const fileNameEl = document.getElementById('fileName');
+  const clearBtn = document.getElementById('clearBtn');
+  const actionsArea = document.getElementById('actionsArea');
+  const secondaryArea = document.getElementById('secondaryArea');
+  const errorArea = document.getElementById('errorArea');
+  const progressWrap = document.getElementById('progressWrap');
+  const progressLabel = document.getElementById('progressLabel');
+  const progressPct = document.getElementById('progressPct');
+  const vuMeter = document.getElementById('vuMeter');
+  const resultArea = document.getElementById('resultArea');
+  const resultMediaWrap = document.getElementById('resultMediaWrap');
+  const downloadLink = document.getElementById('downloadLink');
+  const resultNote = document.getElementById('resultNote');
+  const compatNote = document.getElementById('compatNote');
+  const statusPill = document.getElementById('statusPill');
+  const statusText = document.getElementById('statusText');
+
+  const state = { file: null, kind: null, secondaryFile: null, secondaryKind: null, busy:false };
+  const SEG_COUNT = 28;
+
+  // ---------- compat check ----------
+  function browserSupported(){
+    const v = document.createElement('video');
+    const hasCapture = typeof v.captureStream === 'function' || typeof v.mozCaptureStream === 'function';
+    return hasCapture && ('MediaRecorder' in window);
+  }
+  if(!browserSupported()){ compatNote.hidden = false; }
+
+  // ---------- vu meter ----------
+  function buildVuMeter(){
+    vuMeter.innerHTML = '';
+    for(let i=0;i<SEG_COUNT;i++){
+      const s = document.createElement('span');
+      s.className = 'vu-seg';
+      vuMeter.appendChild(s);
+    }
+  }
+  buildVuMeter();
+  function updateProgress(pct){
+    progressPct.textContent = Math.round(pct) + '%';
+    const lit = Math.round((pct/100) * SEG_COUNT);
+    [...vuMeter.children].forEach((seg, i) => seg.classList.toggle('lit', i < lit));
+  }
+
+  function setStatus(kind, label){
+    statusPill.className = 'status status--' + kind;
+    statusText.textContent = label;
+  }
+
+  function setBusy(isBusy){
+    state.busy = isBusy;
+    progressWrap.hidden = !isBusy;
+    if(isBusy){ updateProgress(0); setStatus('busy','memproses'); }
+    actionsArea.querySelectorAll('.action').forEach(b => b.disabled = isBusy);
+  }
+
+  function showError(msg){
+    errorArea.innerHTML = '<div class="error-note">' + msg + '</div>';
+    setStatus('error','gagal');
+  }
+  function clearError(){ errorArea.innerHTML=''; }
+
+  // ---------- file type detection ----------
+  const VIDEO_EXT = ['mp4','mov','webm','mkv','avi','m4v','ogv'];
+  const AUDIO_EXT = ['mp3','wav','m4a','aac','ogg','flac','opus','weba'];
+  function detectKind(file){
+    if(file.type.startsWith('video/')) return 'video';
+    if(file.type.startsWith('audio/')) return 'audio';
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    if(VIDEO_EXT.includes(ext)) return 'video';
+    if(AUDIO_EXT.includes(ext)) return 'audio';
+    return null;
+  }
+
+  // ---------- generic dropzone wiring ----------
+  function wireDropzone(zoneEl, inputEl, onFile){
+    zoneEl.addEventListener('click', () => inputEl.click());
+    inputEl.addEventListener('change', () => {
+      if(inputEl.files[0]) onFile(inputEl.files[0]);
+    });
+    ['dragenter','dragover'].forEach(ev => zoneEl.addEventListener(ev, e => {
+      e.preventDefault(); zoneEl.classList.add('is-drag');
+    }));
+    ['dragleave','drop'].forEach(ev => zoneEl.addEventListener(ev, e => {
+      e.preventDefault(); zoneEl.classList.remove('is-drag');
+    }));
+    zoneEl.addEventListener('drop', e => {
+      const f = e.dataTransfer.files[0];
+      if(f) onFile(f);
+    });
+  }
+
+  wireDropzone(dropzoneMain, fileInputMain, handleMainFile);
+
+  function handleMainFile(file){
+    const kind = detectKind(file);
+    clearError();
+    resultArea.hidden = true;
+    secondaryArea.hidden = true;
+    if(!kind){
+      showError('Format file ini tidak dikenali. Coba file video (mp4, mov, webm…) atau audio (mp3, wav, m4a…) yang umum.');
+      return;
+    }
+    state.file = file; state.kind = kind; state.secondaryFile = null;
+    setStatus('idle','siap');
+
+    previewMediaWrap.innerHTML = '';
+    const el = document.createElement(kind === 'video' ? 'video' : 'audio');
+    el.src = URL.createObjectURL(file);
+    el.controls = true;
+    previewMediaWrap.appendChild(el);
+    fileNameEl.textContent = file.name;
+    previewArea.hidden = false;
+
+    renderActions();
+  }
+
+  clearBtn.addEventListener('click', () => {
+    state.file = null; state.kind = null; state.secondaryFile = null;
+    previewArea.hidden = true;
+    actionsArea.hidden = true;
+    secondaryArea.hidden = true;
+    resultArea.hidden = true;
+    clearError();
+    setStatus('idle','siap');
+    fileInputMain.value = '';
+  });
+
+  // ---------- action rendering ----------
+  function addAction(container, label, desc, handler){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'action';
+    btn.innerHTML = '<div><p class="action__label"></p><p class="action__desc"></p></div><span class="action__go">→</span>';
+    btn.querySelector('.action__label').textContent = label;
+    btn.querySelector('.action__desc').textContent = desc;
+    btn.addEventListener('click', handler);
+    container.appendChild(btn);
+    return btn;
+  }
+
+  function renderActions(){
+    actionsArea.innerHTML = '';
+    actionsArea.hidden = false;
+    secondaryArea.hidden = true;
+
+    if(state.kind === 'video'){
+      addAction(actionsArea, 'Konversi ke WebM', 'Simpan ulang video ini (gambar + suara) dalam format WebM.', runConvertAsIs);
+      addAction(actionsArea, 'Ambil audionya saja', 'Keluarkan suaranya menjadi file audio terpisah.', runExtractAudio);
+      addAction(actionsArea, 'Bisukan video', 'Buang audionya, hasil akhirnya video tanpa suara.', runMute);
+      addAction(actionsArea, 'Ganti / tambah audio', 'Pasang suara dari file audio lain ke video ini.', () => showSecondaryDrop('audio'));
+    } else {
+      addAction(actionsArea, 'Konversi ke WebM', 'Simpan ulang audio ini dalam format WebM (Opus).', runConvertAsIs);
+      addAction(actionsArea, 'Tempelkan ke video', 'Gabungkan audio ini dengan video (yang belum ada suaranya) pilihanmu.', () => showSecondaryDrop('video'));
+    }
+  }
+
+  function showSecondaryDrop(neededKind){
+    secondaryArea.hidden = false;
+    secondaryArea.innerHTML = '';
+    const title = document.createElement('p');
+    title.className = 'secondary__title';
+    title.textContent = neededKind === 'audio'
+      ? 'Jatuhkan file audio yang mau dipasang:'
+      : 'Jatuhkan file video yang mau ditempeli audio ini:';
+    secondaryArea.appendChild(title);
+
+    const zone = document.createElement('div');
+    zone.className = 'dropzone dropzone--compact';
+    zone.innerHTML = '<p class="dropzone__title">Tarik &amp; lepas di sini</p><p class="dropzone__sub">atau <span class="link-btn">pilih dari perangkat</span></p>';
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = neededKind === 'audio' ? 'audio/*' : 'video/*';
+    input.hidden = true;
+    secondaryArea.appendChild(zone);
+    secondaryArea.appendChild(input);
+
+    const nameLine = document.createElement('p');
+    nameLine.className = 'secondary__filename mono';
+    secondaryArea.appendChild(nameLine);
+
+    const goBtn = document.createElement('button');
+    goBtn.type = 'button';
+    goBtn.className = 'btn btn--primary';
+    goBtn.textContent = 'Gabungkan sekarang';
+    goBtn.disabled = true;
+    secondaryArea.appendChild(goBtn);
+
+    function onPicked(file){
+      const kind = detectKind(file);
+      if(kind !== neededKind){
+        showError('File itu kelihatannya bukan file ' + (neededKind==='audio'?'audio':'video') + '. Coba pilih ulang.');
+        return;
+      }
+      clearError();
+      state.secondaryFile = file;
+      nameLine.textContent = file.name;
+      goBtn.disabled = false;
+    }
+    wireDropzone(zone, input, onPicked);
+    goBtn.addEventListener('click', runCombine);
+  }
+
+  // ---------- media helpers ----------
+  function makeMediaEl(kind, file){
+    const el = document.createElement(kind === 'video' ? 'video' : 'audio');
+    el.src = URL.createObjectURL(file);
+    el.muted = true;
+    el.playsInline = true;
+    el.preload = 'auto';
+    el.style.position = 'fixed';
+    el.style.left = '-9999px';
+    el.style.width = '1px';
+    el.style.height = '1px';
+    document.body.appendChild(el);
+    return el;
+  }
+  function waitLoaded(el){
+    return new Promise((resolve, reject) => {
+      if(el.readyState >= 1) return resolve();
+      el.addEventListener('loadedmetadata', () => resolve(), { once:true });
+      el.addEventListener('error', () => reject(new Error('load-failed')), { once:true });
+    });
+  }
+  function captureOf(el){
+    return el.captureStream ? el.captureStream() : el.mozCaptureStream();
+  }
+  function pickMime(candidates){
+    for(const c of candidates){
+      if(window.MediaRecorder && MediaRecorder.isTypeSupported(c)) return c;
+    }
+    return candidates[candidates.length - 1];
+  }
+
+  async function recordAndSave({ tracks, mimeCandidates, players, masterPlayer }){
+    const mime = pickMime(mimeCandidates);
+    const stream = new MediaStream(tracks);
+    const recorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+    const chunks = [];
+    recorder.ondataavailable = e => { if(e.data && e.data.size > 0) chunks.push(e.data); };
+    const stopped = new Promise(res => { recorder.onstop = res; });
+
+    players.forEach(p => { p.currentTime = 0; });
+    recorder.start(150);
+    await Promise.all(players.map(p => p.play().catch(() => {})));
+
+    const onTime = () => {
+      const dur = masterPlayer.duration;
+      if(dur && isFinite(dur)){
+        updateProgress(Math.min(100, (masterPlayer.currentTime / dur) * 100));
+      }
+    };
+    masterPlayer.addEventListener('timeupdate', onTime);
+    await new Promise(res => masterPlayer.addEventListener('ended', res, { once:true }));
+    masterPlayer.removeEventListener('timeupdate', onTime);
+
+    players.forEach(p => { try{ p.pause(); }catch(e){} });
+    recorder.stop();
+    await stopped;
+    updateProgress(100);
+    return { blob: new Blob(chunks, { type: mime || 'video/webm' }), mime };
+  }
+
+  function baseName(file){
+    return file.name.replace(/\.[^.]+$/, '');
+  }
+
+  function finishResult(blob, kind, sourceName, note){
+    const url = URL.createObjectURL(blob);
+    resultMediaWrap.innerHTML = '';
+    const el = document.createElement(kind === 'video' ? 'video' : 'audio');
+    el.src = url; el.controls = true;
+    resultMediaWrap.appendChild(el);
+    downloadLink.href = url;
+    downloadLink.download = baseName(sourceName) + '-hasil.webm';
+    resultNote.textContent = note || '';
+    resultArea.hidden = false;
+    setStatus('done','selesai');
+    resultArea.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  function cleanupEls(...els){ els.forEach(e => { try{ e.remove(); }catch(err){} }); }
+
+  // ---------- actions ----------
+  async function runConvertAsIs(){
+    if(state.busy) return;
+    clearError(); setBusy(true);
+    let el;
+    try{
+      el = makeMediaEl(state.kind, state.file);
+      await waitLoaded(el);
+      const stream = captureOf(el);
+      const tracks = stream.getTracks();
+      const mimeCandidates = state.kind === 'video'
+        ? ['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']
+        : ['audio/webm;codecs=opus','audio/webm'];
+      const { blob } = await recordAndSave({ tracks, mimeCandidates, players:[el], masterPlayer: el });
+      finishResult(blob, state.kind, state.file.name, 'Dikonversi ulang ke WebM dari file aslinya.');
+    }catch(err){
+      showError('Konversi gagal di browser ini. Coba pakai Chrome/Edge terbaru di desktop.');
+    }finally{
+      if(el) cleanupEls(el);
+      setBusy(false);
+    }
+  }
+
+  async function runExtractAudio(){
+    if(state.busy) return;
+    clearError(); setBusy(true);
+    let el;
+    try{
+      el = makeMediaEl('video', state.file);
+      await waitLoaded(el);
+      const stream = captureOf(el);
+      const audioTracks = stream.getAudioTracks();
+      if(audioTracks.length === 0){
+        showError('Video ini sepertinya tidak punya audio untuk diambil.');
+        return;
+      }
+      const mimeCandidates = ['audio/webm;codecs=opus','audio/webm'];
+      const { blob } = await recordAndSave({ tracks: audioTracks, mimeCandidates, players:[el], masterPlayer: el });
+      finishResult(blob, 'audio', state.file.name, 'Suara video sudah dipisah jadi file audio.');
+    }catch(err){
+      showError('Proses gagal di browser ini. Coba pakai Chrome/Edge terbaru di desktop.');
+    }finally{
+      if(el) cleanupEls(el);
+      setBusy(false);
+    }
+  }
+
+  async function runMute(){
+    if(state.busy) return;
+    clearError(); setBusy(true);
+    let el;
+    try{
+      el = makeMediaEl('video', state.file);
+      await waitLoaded(el);
+      const stream = captureOf(el);
+      const videoTracks = stream.getVideoTracks();
+      const mimeCandidates = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+      const { blob } = await recordAndSave({ tracks: videoTracks, mimeCandidates, players:[el], masterPlayer: el });
+      finishResult(blob, 'video', state.file.name, 'Audio sudah dibuang, video ini tanpa suara.');
+    }catch(err){
+      showError('Proses gagal di browser ini. Coba pakai Chrome/Edge terbaru di desktop.');
+    }finally{
+      if(el) cleanupEls(el);
+      setBusy(false);
+    }
+  }
+
+  async function runCombine(){
+    if(state.busy) return;
+    if(!state.secondaryFile) return;
+    clearError(); setBusy(true);
+
+    let videoFile, audioFile;
+    if(state.kind === 'video'){ videoFile = state.file; audioFile = state.secondaryFile; }
+    else { videoFile = state.secondaryFile; audioFile = state.file; }
+
+    let vEl, aEl;
+    try{
+      vEl = makeMediaEl('video', videoFile);
+      aEl = makeMediaEl('audio', audioFile);
+      await Promise.all([waitLoaded(vEl), waitLoaded(aEl)]);
+
+      const vStream = captureOf(vEl);
+      const aStream = captureOf(aEl);
+      const audioTracks = aStream.getAudioTracks();
+      if(audioTracks.length === 0){
+        showError('File audio yang dipilih sepertinya tidak punya suara.');
+        return;
+      }
+      const tracks = [...vStream.getVideoTracks(), ...audioTracks];
+      const mimeCandidates = ['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
+      const { blob } = await recordAndSave({ tracks, mimeCandidates, players:[vEl, aEl], masterPlayer: vEl });
+      finishResult(blob, 'video', videoFile.name, 'Durasi hasil mengikuti durasi videonya. Kalau audio lebih pendek, sisanya jadi senyap.');
+    }catch(err){
+      showError('Proses gagal di browser ini. Coba pakai Chrome/Edge terbaru di desktop.');
+    }finally{
+      if(vEl) cleanupEls(vEl);
+      if(aEl) cleanupEls(aEl);
+      setBusy(false);
+    }
+  }
+
+})();
+</script>
+</body>
+</html>
